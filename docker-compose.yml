@@ -1,0 +1,53 @@
+#version: '3'
+
+services:
+  # Broker MQTT (Eclipse Mosquitto)
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    container_name: mqtt-broker
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    restart: unless-stopped
+    networks:
+      - mqtt-net
+
+  # Simulador de ataques
+  simulator:
+    build: .
+    container_name: mqtt
+    depends_on:
+      - mosquitto
+    networks:
+      - mqtt-net
+    volumes:
+      - ./:/app
+    command: >
+      python iits.py 
+      --broker mosquitto
+      --devices 5
+      --duration 300
+      --bruteforce
+      --ddos
+      --ddos-type publish
+
+  # MQTT Explorer (interface web para visualização)
+  mqtt-explorer:
+    image: smeagolworms4/mqtt-explorer
+    container_name: mqtt-explorer
+    ports:
+      - "4000:4000"
+    environment:
+      - HTTP_PORT=4000
+    networks:
+      - mqtt-net
+    depends_on:
+      - mosquitto
+
+networks:
+  mqtt-net:
+    driver: bridge
