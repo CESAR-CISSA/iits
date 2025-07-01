@@ -4,8 +4,6 @@ IITS - Industrial IoT Threat Simulator is a python project that simulates an ind
 
 It includes an IoT-MQTT attack environment simulated through a docker mosquitto. It is possible to simulate brute force and DDoS attacks.
 
-The simulator was projected by Diogo Rocha de Araujo.
-
 **Disclamer**: The IITS - Industrial IoT Threat Simulator its destined only for research and controlled enviroment tests.
 
 # Functionalities
